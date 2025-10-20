@@ -134,15 +134,6 @@ footer{text-align:center; padding:10px; font-size:12px; color:#555;}
       <div class="add-card">
   <!-- ลบ list="itemList" และ datalist ออก -->
   <input id="title" placeholder="ชื่อรายการ เช่น ข้าวเที่ยง">
-  
-  <input id="amount" placeholder="จำนวนเต็มก่อนหารครึ่ง (฿)" type="number" step="0.01">
-  <select id="payer">
-    <option value="you">คุณ</option>
-    <option value="partner">แฟน</option>
-  </select>
-  <button id="addBtn">+ เพิ่มรายการ</button>
-</div>
-
       <input id="amount" placeholder="จำนวนเต็มก่อนหารครึ่ง (฿)" type="number" step="0.01">
       <select id="payer">
         <option value="you">คุณ</option>
