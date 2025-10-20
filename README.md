@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>CoupleSplit — ต้น & แป๋ม</title>
 <style>
 :root{
@@ -16,12 +16,14 @@ html, body{
   font-family:var(--font-family); background:var(--bg);
   display:flex; justify-content:center; align-items:flex-start;
   background-image: linear-gradient(120deg, #ffe0f0 0%, #fff0f5 100%);
+  overflow-x:hidden;
 }
 .wrap{
-  width:100%; max-width:600px; margin:20px; background:var(--card); 
+  width:100%; max-width:600px; margin:10px; background:var(--card); 
   border-radius:var(--radius); backdrop-filter: blur(10px);
   box-shadow:0 10px 25px rgba(0,0,0,0.15); overflow:hidden; border:2px solid #ffe0f0;
   display:flex; flex-direction:column; animation:fadeIn 0.5s ease-in-out;
+  min-height:calc(100vh - 20px);
 }
 header{
   padding:20px; text-align:center; background:linear-gradient(90deg, #ff6f91, #ffb6b9); color:white;
@@ -41,12 +43,12 @@ header p{margin:5px 0 0 0; font-size:14px;}
 }
 .swap-btn:hover{background:var(--accent2); color:white; transform:scale(1.05);}
 main{
-  padding:20px; flex:1; display:flex; flex-direction:column;
+  padding:15px; flex:1; display:flex; flex-direction:column;
   overflow:auto;
-  max-height:calc(100vh - 140px);
+  max-height:calc(100vh - 160px);
 }
-.summary{text-align:center; margin-bottom:20px;}
-.summary div{margin:10px 0; font-size:18px; font-weight:600; padding:10px; border-radius:12px; background:#ffffff77; backdrop-filter: blur(5px);}
+.summary{text-align:center; margin-bottom:15px;}
+.summary div{margin:8px 0; font-size:18px; font-weight:600; padding:10px; border-radius:12px; background:#ffffff77; backdrop-filter: blur(5px);}
 .summary .big{font-size:22px; font-weight:700;}
 .list{margin-top:10px; flex:1; overflow-y:auto;}
 .item{
@@ -131,9 +133,7 @@ footer{text-align:center; padding:10px; font-size:12px; color:#555;}
       <div id="finalSummary" class="big">ยังไม่มีข้อมูล</div>
     </div>
     <div class="add-card">
-      <div class="add-card">
-  <!-- ลบ list="itemList" และ datalist ออก -->
-  <input id="title" placeholder="ชื่อรายการ เช่น ข้าวเที่ยง">
+      <input id="title" placeholder="ชื่อรายการ เช่น ข้าวเที่ยง">
       <input id="amount" placeholder="จำนวนเต็มก่อนหารครึ่ง (฿)" type="number" step="0.01">
       <select id="payer">
         <option value="you">คุณ</option>
