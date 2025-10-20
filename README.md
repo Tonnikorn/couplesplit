@@ -12,21 +12,18 @@
 }
 *{box-sizing:border-box;}
 html, body{
-  margin:0; padding:0; width:100%; height:100%;
+  margin:0; padding:0; width:100%; min-height:100%;
   font-family:var(--font-family); background:var(--bg);
-  display:flex; justify-content:center; align-items:flex-start;
   background-image: linear-gradient(120deg, #ffe0f0 0%, #fff0f5 100%);
-  overflow:hidden;
+  overflow:auto; /* ทำให้หน้าเลื่อนทั้งหน้าได้ */
 }
 .wrap{
-  width:100%; max-width:600px; margin:0;
-  background:var(--card); 
-  border-radius:var(--radius); 
+  width:100%; max-width:600px; margin:20px auto;
+  background:var(--card); border-radius:var(--radius); 
   backdrop-filter: blur(10px);
   box-shadow:0 10px 25px rgba(255,111,145,0.15);
   overflow:hidden; display:flex; flex-direction:column;
   animation:fadeIn 0.5s ease-in-out;
-  height:100vh;
 }
 header{
   padding:20px; text-align:center; background:linear-gradient(90deg, #ff6f91, #ffb6b9); color:white;
@@ -40,9 +37,7 @@ header p{margin:5px 0 0 0; font-size:14px;}
   padding:6px 12px; border-radius:16px; border:none; text-align:center; font-weight:600; font-size:14px;
   box-shadow:0 6px 15px rgba(255,111,145,0.2); min-width:80px; transition:0.2s;
 }
-.names input:focus{
-  outline:none; transform:scale(1.03);
-}
+.names input:focus{outline:none; transform:scale(1.03);}
 .swap-btn{
   margin-top:10px; padding:6px 12px; border:none; border-radius:16px;
   background:#ffe0e6; color:var(--accent); cursor:pointer; font-weight:600; transition:0.2s;
@@ -52,13 +47,14 @@ header p{margin:5px 0 0 0; font-size:14px;}
 .swap-btn:active{transform:scale(0.95); box-shadow:0 4px 10px rgba(255,111,145,0.2);}
 main{
   padding:15px; flex:1; display:flex; flex-direction:column;
-  overflow:auto;
-  max-height:calc(100vh - 160px);
 }
 .summary{text-align:center; margin-bottom:15px;}
 .summary div{margin:8px 0; font-size:18px; font-weight:600; padding:10px; border-radius:16px; background:#ffffff77; backdrop-filter: blur(5px);}
 .summary .big{font-size:22px; font-weight:700;}
-.list{margin-top:10px; flex:1; overflow-y:auto;}
+.list{
+  margin-top:10px; flex:1; overflow-y:auto;
+  max-height:300px; /* scroll เฉพาะรายการ */
+}
 .item{
   display:flex; justify-content:space-between; align-items:center;
   padding:10px; border-radius:16px; margin-bottom:8px; background:#fff3f6cc; 
@@ -79,9 +75,7 @@ main{
   background:#ffffffaa; backdrop-filter: blur(5px); transition:0.2s; box-shadow:0 6px 15px rgba(255,111,145,0.2);
 }
 .add-card input::placeholder{color:#888;}
-.add-card input:focus, .add-card select:focus{
-  outline:none; transform:scale(1.03);
-}
+.add-card input:focus, .add-card select:focus{outline:none; transform:scale(1.03);}
 .add-card button{
   padding:10px 15px; border:none; border-radius:16px; background:var(--accent); color:white; font-weight:700;
   transition:0.2s; cursor:pointer; box-shadow:0 6px 15px rgba(255,111,145,0.2);
@@ -119,20 +113,13 @@ footer{text-align:center; padding:10px; font-size:12px; color:#555;}
 /* Animations */
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 @keyframes popIn{from{transform:scale(0.8);}to{transform:scale(1);}}
-@keyframes fadeColor{
-  0%{color:#ff6f91;}
-  50%{color:#ff90a0;}
-  100%{color:#ff6f91;}
-}
-
-/* Scrollbar */
+@keyframes fadeColor{0%{color:#ff6f91;}50%{color:#ff90a0;}100%{color:#ff6f91;}}
 .list::-webkit-scrollbar, #billContent::-webkit-scrollbar{width:6px;}
 .list::-webkit-scrollbar-thumb, #billContent::-webkit-scrollbar-thumb{background:#ffb6b9; border-radius:3px;}
 </style>
 </head>
 <body>
 
-<!-- เสียงกดปุ่ม -->
 <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
 <div class="wrap">
@@ -253,12 +240,6 @@ footer{text-align:center; padding:10px; font-size:12px; color:#555;}
     billHTML.innerHTML=html; billPopup.style.display='flex';
   };
   closePopup.onclick=()=>{ playSound(); billPopup.style.display='none'; }
-
-  // เล่นเสียงทุกปุ่ม
-  document.querySelectorAll('button').forEach(btn=>{
-    btn.addEventListener('click', playSound);
-  });
-
   load();
 })();
 </script>
