@@ -13,9 +13,10 @@
 *{box-sizing:border-box;}
 html, body{
   margin:0; padding:0; width:100%; min-height:100%;
-  font-family:var(--font-family); background:var(--bg);
+  font-family:var(--font-family);
+  background:var(--bg);
   background-image: linear-gradient(120deg, #ffe0f0 0%, #fff0f5 100%);
-  overflow:auto; /* ทำให้หน้าเลื่อนทั้งหน้าได้ */
+  overflow:auto; /* เลื่อนทั้งหน้าได้ */
 }
 .wrap{
   width:100%; max-width:600px; margin:20px auto;
@@ -26,9 +27,14 @@ html, body{
   animation:fadeIn 0.5s ease-in-out;
 }
 header{
-  padding:20px; text-align:center; background:linear-gradient(90deg, #ff6f91, #ffb6b9); color:white;
-  border-bottom-left-radius:24px; border-bottom-right-radius:24px;
+  padding:20px; 
+  text-align:center; 
+  background:linear-gradient(90deg, #ff6f91, #ffb6b9); 
+  color:white;
+  border-bottom-left-radius:24px; 
+  border-bottom-right-radius:24px;
   box-shadow: 0 6px 15px rgba(255,111,145,0.2);
+  /* header เลื่อนตามบอดี้ */
 }
 header h1{margin:0; font-size:28px; letter-spacing:1px; text-shadow:1px 1px 4px rgba(0,0,0,0.2);}
 header p{margin:5px 0 0 0; font-size:14px;}
@@ -53,7 +59,7 @@ main{
 .summary .big{font-size:22px; font-weight:700;}
 .list{
   margin-top:10px; flex:1; overflow-y:auto;
-  max-height:300px; /* scroll เฉพาะรายการ */
+  max-height:300px; /* scroll เฉพาะรายการเยอะ */
 }
 .item{
   display:flex; justify-content:space-between; align-items:center;
