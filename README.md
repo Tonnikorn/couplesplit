@@ -197,148 +197,106 @@ button:hover{transform:translateY(-2px);}
 
 </div>
 
-<audio id="clickSound">
-<source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3">
-</audio>
-
 <script>
-/* BLOCK ZOOM */
-document.addEventListener('gesturestart',e=>e.preventDefault());
-document.addEventListener('touchmove',e=>{
- if(e.scale!==1) e.preventDefault();
-},{passive:false});
-let lastTouch=0;
-document.addEventListener('touchend',e=>{
- let now=Date.now();
- if(now-lastTouch<=300) e.preventDefault();
- lastTouch=now;
-});
-
-/* API URL ของ Google Sheet Web App */
 const API_URL = "https://script.google.com/macros/s/AKfycbzNRFBiH4gN6Kog9jZ4672L2EzQONFwV_LhXZM9KbIg8KiMXns8OKP2NtuCucbrDwWIcw/exec";
-
-/* APP */
 let expenses=[];
+
 const titleEl=title,amountEl=amount,payerEl=payer;
 const listEl=list,summaryEl=finalSummary;
 const toast=document.getElementById("toast");
-const clickSound=document.getElementById("clickSound");
 
+/* Toast */
 function showToast(m){
  toast.innerText=m;
  toast.classList.add("show");
  setTimeout(()=>toast.classList.remove("show"),2000);
 }
 
-function playClick(){
- clickSound.currentTime=0;
- clickSound.play();
+/* Load Cloud */
+async function loadCloud(){
+ const res = await fetch(API_URL);
+ expenses = await res.json();
+ render();
 }
 
-function spawnHeart(){
- let h=document.createElement("div");
- h.className="heart";
- h.innerText="💖";
- document.body.appendChild(h);
- setTimeout(()=>h.remove(),1200);
-}
-
-function saveLocal(){
- localStorage.setItem("coupleData",JSON.stringify(expenses));
-}
-function loadLocal(){
- expenses=JSON.parse(localStorage.getItem("coupleData")||"[]");
-}
-
-function render(){
- listEl.innerHTML="";
- let ton=0,pam=0;
- expenses.forEach((e,i)=>{
-  let half=e.amount/2;
-  e.payer==="ต้น"?pam+=half:ton+=half;
-  let d=document.createElement("div");
-  d.className="item";
-  d.innerHTML=`
-   <span>${e.payer} ซื้อ ${e.title} ${e.amount}฿</span>
-   <div class="actions">
-    <button class="edit" onclick="editItem(${i})">✏️</button>
-    <button class="del" onclick="deleteItem(${i})">❌</button>
-   </div>`;
-  listEl.appendChild(d);
- });
- if(ton>pam) summaryEl.innerText=`ต้นติดแป๋ม ${(ton-pam).toFixed(2)} บาท`;
- else if(pam>ton) summaryEl.innerText=`แป๋มติดต้น ${(pam-ton).toFixed(2)} บาท`;
- else summaryEl.innerText="🎉 เสมอกัน";
-}
-
+/* Add */
 addBtn.onclick = async () => {
- playClick(); spawnHeart();
 
  if(!titleEl.value || !amountEl.value){
   showToast("กรอกข้อมูลให้ครบ");
   return;
  }
 
- const item = {
-  title: titleEl.value,
-  amount: Number(amountEl.value),
-  payer: payerEl.value,
-  recorder: payerEl.value
+ const item={
+  action:"add",
+  title:titleEl.value,
+  amount:Number(amountEl.value),
+  payer:payerEl.value
  };
 
- // บันทึก Local
- expenses.push(item);
- saveLocal();
- render();
-
- // ส่งเข้า Google Sheet
- try {
-   await fetch(API_URL, {
-     method:"POST",
-     body:JSON.stringify(item)
-   });
-   showToast("บันทึกลงชีตแล้ว");
- } catch(err) {
-   console.error(err);
-   showToast("เชื่อมชีตไม่สำเร็จ");
- }
+ await fetch(API_URL,{
+  method:"POST",
+  body:JSON.stringify(item)
+ });
 
  titleEl.value="";
  amountEl.value="";
+ loadCloud();
+ showToast("บันทึกแล้ว 💖");
 };
 
-window.editItem = i => {
- titleEl.value = expenses[i].title;
- amountEl.value = expenses[i].amount;
- payerEl.value = expenses[i].payer;
- expenses.splice(i,1);
- saveLocal(); render();
-};
-
-window.deleteItem = i => {
+/* Delete */
+window.deleteItem = async i =>{
  if(confirm("ลบรายการนี้?")){
-  expenses.splice(i,1);
-  saveLocal(); render();
+  await fetch(API_URL,{
+   method:"POST",
+   body:JSON.stringify({
+    action:"delete",
+    id:expenses[i].id
+   })
+  });
+  loadCloud();
  }
 };
 
+/* Render */
+function render(){
+ listEl.innerHTML="";
+ let ton=0,pam=0;
+
+ expenses.forEach((e,i)=>{
+  let half=e.amount/2;
+  e.payer==="ต้น"?pam+=half:ton+=half;
+
+  listEl.innerHTML+=`
+   <div class="item">
+    <span>${e.payer} ซื้อ ${e.title} ${e.amount}฿</span>
+    <div class="actions">
+     <button class="del" onclick="deleteItem(${i})">❌</button>
+    </div>
+   </div>
+  `;
+ });
+
+ if(ton>pam) summaryEl.innerText=`ต้นติดแป๋ม ${(ton-pam).toFixed(2)} บาท`;
+ else if(pam>ton) summaryEl.innerText=`แป๋มติดต้น ${(pam-ton).toFixed(2)} บาท`;
+ else summaryEl.innerText="🎉 เสมอกัน";
+}
+
+/* Bill */
 function openBill(){
  let t=0,bill="";
  expenses.forEach(e=>{
-  bill += `${e.title} - ${e.amount}฿ (${e.payer})\n`;
-  t += e.amount;
+  bill+=`${e.title} - ${e.amount}฿ (${e.payer})\n`;
+  t+=e.amount;
  });
- alert(bill + "\nรวม " + t + " บาท");
+ alert(bill+"\nรวม "+t+" บาท");
 }
 
-resetAll.onclick = () => {
- if(confirm("ล้างทั้งหมด?")){
-  expenses = [];
-  saveLocal(); render();
- }
-};
+/* Reset All */
+resetAll.onclick=()=>alert("ล้างได้จาก Google Sheet");
 
-loadLocal(); render();
+loadCloud();
 </script>
 
 </body>
