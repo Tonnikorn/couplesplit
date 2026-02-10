@@ -2,14 +2,26 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- LOCK ZOOM -->
+<meta name="viewport" 
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>แบบบันทึกรายจ่าย Cute</title>
 
-<!-- FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;font-family:'Quicksand',sans-serif;}
+*{
+ box-sizing:border-box;
+ font-family:'Quicksand',sans-serif;
+}
+
+html,body{
+ width:100%;
+ overflow-x:hidden;
+ -webkit-text-size-adjust:100%;
+}
 
 body{
  margin:0;
@@ -17,13 +29,14 @@ body{
  background:linear-gradient(135deg,#ffe4ec,#fff1f6);
  display:flex;
  justify-content:center;
+ padding-bottom:env(safe-area-inset-bottom);
 }
 
 /* CARD */
 .wrap{
  width:100%;
  max-width:420px;
- margin:20px;
+ margin:12px;
  background:white;
  border-radius:30px;
  padding:22px;
@@ -34,7 +47,7 @@ body{
 header{text-align:center;}
 header h2{
  margin:5px 0 10px;
- font-size:32px;
+ font-size:30px;
  color:#ff6b8a;
 }
 
@@ -57,33 +70,21 @@ input,select{
  border-radius:16px;
  border:1px solid #ffd1dc;
  margin-bottom:10px;
- font-size:15px;
+ font-size:16px;
  outline:none;
 }
 
-input:focus,select:focus{
- border-color:#ff6b8a;
- box-shadow:0 0 0 2px #ffdce5;
-}
-
 /* BUTTON */
-.btn-grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:10px;
- margin-top:6px;
-}
-
 button{
  padding:14px;
  border-radius:16px;
  border:none;
- font-size:15px;
+ font-size:16px;
  font-weight:600;
  cursor:pointer;
+ min-height:48px;
  transition:.2s;
 }
-
 button:hover{transform:translateY(-2px);}
 
 .addBtn{background:#ff6b8a;color:white;}
@@ -93,6 +94,14 @@ button:hover{transform:translateY(-2px);}
  color:white;
  margin-top:12px;
  width:100%;
+}
+
+/* GRID */
+.btn-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ margin-top:6px;
 }
 
 /* ITEM */
@@ -109,7 +118,7 @@ button:hover{transform:translateY(-2px);}
 
 @keyframes fade{
  from{opacity:0;transform:translateY(10px)}
- to{opacity:1;transform:none}
+ to{opacity:1;}
 }
 
 .actions button{
@@ -117,6 +126,7 @@ button:hover{transform:translateY(-2px);}
  font-size:12px;
  border-radius:10px;
  margin-left:5px;
+ min-height:auto;
 }
 
 .edit{background:#ffd56b;}
@@ -169,7 +179,7 @@ button:hover{transform:translateY(-2px);}
  z-index:10;
 }
 
-/* FLOATING HEART */
+/* HEART */
 .heart{
  position:fixed;
  bottom:90px;
@@ -178,7 +188,6 @@ button:hover{transform:translateY(-2px);}
  animation:floatUp 1.2s ease-out forwards;
  pointer-events:none;
 }
-
 @keyframes floatUp{
  0%{transform:translate(-50%,0) scale(1);opacity:1;}
  100%{transform:translate(-50%,-130px) scale(1.8);opacity:0;}
@@ -188,16 +197,13 @@ button:hover{transform:translateY(-2px);}
 
 <body>
 
-<!-- LOADING -->
 <div class="loading" id="loading">⏳ กำลังโหลด...</div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <div class="wrap">
 
 <header>
-<h2>💑 แบบบันทึกรายจ่าย 💑 </h2>
+<h2>💑 แบบบันทึกรายจ่าย 💑</h2>
 </header>
 
 <div class="summary" id="finalSummary">-</div>
@@ -211,8 +217,8 @@ button:hover{transform:translateY(-2px);}
 </select>
 
 <div class="btn-grid">
- <button class="addBtn" id="addBtn">➕ เพิ่ม</button>
- <button class="billBtn" onclick="openBill()">🧾 บิล</button>
+<button class="addBtn" id="addBtn">➕ เพิ่ม</button>
+<button class="billBtn" onclick="openBill()">🧾 บิล</button>
 </div>
 
 <div id="list"></div>
@@ -221,7 +227,7 @@ button:hover{transform:translateY(-2px);}
 
 </div>
 
-<!-- BILL MODAL -->
+<!-- BILL -->
 <div class="modal" id="billModal">
  <div class="modal-content">
   <h3>🧾 บิลรวม</h3>
@@ -232,14 +238,11 @@ button:hover{transform:translateY(-2px);}
  </div>
 </div>
 
-<!-- SOUND -->
 <audio id="clickSound">
- <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3">
+<source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3">
 </audio>
 
 <script>
-const SHEET_URL="https://script.google.com/macros/s/AKfycbzNRFBiH4gN6Kog9jZ4672L2EzQONFwV_LhXZM9KbIg8KiMXns8OKP2NtuCucbrDwWIcw/exec";
-
 let expenses=[];
 
 const titleEl=title;
@@ -258,43 +261,23 @@ function showToast(msg){
  setTimeout(()=>toast.classList.remove("show"),2000);
 }
 
-function showLoading(v){
- loading.style.display=v?"flex":"none";
-}
-
 function playClick(){
  clickSound.currentTime=0;
  clickSound.play();
 }
 
 function spawnHeart(){
- const heart=document.createElement("div");
- heart.className="heart";
- heart.innerText="💖";
- document.body.appendChild(heart);
- setTimeout(()=>heart.remove(),1200);
+ const h=document.createElement("div");
+ h.className="heart";
+ h.innerText="💖";
+ document.body.appendChild(h);
+ setTimeout(()=>h.remove(),1200);
 }
 
-/* LOAD */
-async function loadFromSheet(){
- showLoading(true);
- try{
-  const r=await fetch(SHEET_URL);
-  expenses=await r.json();
-  saveLocal();
-  showToast("โหลดข้อมูลสำเร็จ");
- }catch{
-  loadLocal();
-  showToast("ใช้ข้อมูลในเครื่อง");
- }
- render();
- showLoading(false);
-}
-
+/* LOCAL STORAGE */
 function saveLocal(){
  localStorage.setItem("coupleData",JSON.stringify(expenses));
 }
-
 function loadLocal(){
  expenses=JSON.parse(localStorage.getItem("coupleData")||"[]");
 }
@@ -325,7 +308,7 @@ function render(){
 }
 
 /* ADD */
-addBtn.onclick=async()=>{
+addBtn.onclick=()=>{
  playClick();
  spawnHeart();
 
@@ -334,31 +317,15 @@ addBtn.onclick=async()=>{
   return;
  }
 
- const data={
+ expenses.push({
   title:titleEl.value,
   amount:Number(amountEl.value),
-  payerName:payerEl.value
- };
-
- expenses.push({
-  title:data.title,
-  amount:data.amount,
-  payer:data.payerName
+  payer:payerEl.value
  });
 
  saveLocal();
  render();
-
- showToast("กำลังบันทึก...");
- try{
-  await fetch(SHEET_URL,{
-   method:"POST",
-   body:JSON.stringify(data)
-  });
-  showToast("บันทึกสำเร็จ");
- }catch{
-  showToast("บันทึกไม่สำเร็จ");
- }
+ showToast("บันทึกแล้ว");
 
  titleEl.value="";
  amountEl.value="";
@@ -412,7 +379,8 @@ resetAll.onclick=()=>{
  }
 }
 
-loadFromSheet();
+loadLocal();
+render();
 </script>
 
 </body>
