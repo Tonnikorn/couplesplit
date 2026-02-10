@@ -134,24 +134,6 @@ button:hover{transform:translateY(-2px);}
 .edit{background:#ffd56b;}
 .del{background:#ff7b7b;color:white;}
 
-/* MODAL */
-.modal{
- position:fixed;
- inset:0;
- background:rgba(0,0,0,.4);
- display:none;
- justify-content:center;
- align-items:center;
-}
-
-.modal-content{
- background:white;
- width:90%;
- max-width:360px;
- padding:20px;
- border-radius:22px;
-}
-
 /* TOAST */
 .toast{
  position:fixed;
@@ -232,6 +214,9 @@ document.addEventListener('touchend',e=>{
  lastTouch=now;
 });
 
+/* API URL ของ Google Sheet Web App */
+const API_URL = "https://script.google.com/macros/s/AKfycbzNRFBiH4gN6Kog9jZ4672L2EzQONFwV_LhXZM9KbIg8KiMXns8OKP2NtuCucbrDwWIcw/exec";
+
 /* APP */
 let expenses=[];
 const titleEl=title,amountEl=amount,payerEl=payer;
@@ -286,54 +271,74 @@ function render(){
  else summaryEl.innerText="🎉 เสมอกัน";
 }
 
-addBtn.onclick=()=>{
- playClick();spawnHeart();
- if(!titleEl.value||!amountEl.value){
-  showToast("กรอกข้อมูลให้ครบ");return;
+addBtn.onclick = async () => {
+ playClick(); spawnHeart();
+
+ if(!titleEl.value || !amountEl.value){
+  showToast("กรอกข้อมูลให้ครบ");
+  return;
  }
- expenses.push({
-  title:titleEl.value,
-  amount:Number(amountEl.value),
-  payer:payerEl.value
- });
- saveLocal();render();
- titleEl.value="";amountEl.value="";
- showToast("บันทึกแล้ว");
+
+ const item = {
+  title: titleEl.value,
+  amount: Number(amountEl.value),
+  payer: payerEl.value,
+  recorder: payerEl.value
+ };
+
+ // บันทึก Local
+ expenses.push(item);
+ saveLocal();
+ render();
+
+ // ส่งเข้า Google Sheet
+ try {
+   await fetch(API_URL, {
+     method:"POST",
+     body:JSON.stringify(item)
+   });
+   showToast("บันทึกลงชีตแล้ว");
+ } catch(err) {
+   console.error(err);
+   showToast("เชื่อมชีตไม่สำเร็จ");
+ }
+
+ titleEl.value="";
+ amountEl.value="";
 };
 
-window.editItem=i=>{
- titleEl.value=expenses[i].title;
- amountEl.value=expenses[i].amount;
- payerEl.value=expenses[i].payer;
+window.editItem = i => {
+ titleEl.value = expenses[i].title;
+ amountEl.value = expenses[i].amount;
+ payerEl.value = expenses[i].payer;
  expenses.splice(i,1);
- saveLocal();render();
+ saveLocal(); render();
 };
 
-window.deleteItem=i=>{
+window.deleteItem = i => {
  if(confirm("ลบรายการนี้?")){
   expenses.splice(i,1);
-  saveLocal();render();
+  saveLocal(); render();
  }
 };
 
 function openBill(){
  let t=0,bill="";
  expenses.forEach(e=>{
-  bill+=`${e.title} - ${e.amount}฿ (${e.payer})<br>`;
-  t+=e.amount;
+  bill += `${e.title} - ${e.amount}฿ (${e.payer})\n`;
+  t += e.amount;
  });
- alert(bill+"\nรวม "+t+" บาท");
+ alert(bill + "\nรวม " + t + " บาท");
 }
 
-resetAll.onclick=()=>{
+resetAll.onclick = () => {
  if(confirm("ล้างทั้งหมด?")){
-  expenses=[];
-  saveLocal();render();
+  expenses = [];
+  saveLocal(); render();
  }
 };
 
-loadLocal();
-render();
+loadLocal(); render();
 </script>
 
 </body>
