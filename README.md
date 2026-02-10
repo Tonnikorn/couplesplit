@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 
-<!-- LOCK ZOOM -->
-<meta name="viewport" 
+<meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>แบบบันทึกรายจ่าย Cute</title>
@@ -19,24 +18,27 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
 
 html,body{
  width:100%;
+ height:100%;
  overflow-x:hidden;
  -webkit-text-size-adjust:100%;
 }
 
 body{
  margin:0;
- min-height:100vh;
  background:linear-gradient(135deg,#ffe4ec,#fff1f6);
  display:flex;
  justify-content:center;
+ align-items:center;
  padding-bottom:env(safe-area-inset-bottom);
+ touch-action:manipulation;
 }
 
 /* CARD */
 .wrap{
  width:100%;
  max-width:420px;
- margin:12px;
+ max-height:95vh;
+ overflow-y:auto;
  background:white;
  border-radius:30px;
  padding:22px;
@@ -166,19 +168,6 @@ button:hover{transform:translateY(-2px);}
 }
 .toast.show{opacity:1}
 
-/* LOADING */
-.loading{
- position:fixed;
- inset:0;
- background:rgba(0,0,0,.5);
- display:none;
- justify-content:center;
- align-items:center;
- color:white;
- font-size:22px;
- z-index:10;
-}
-
 /* HEART */
 .heart{
  position:fixed;
@@ -197,7 +186,6 @@ button:hover{transform:translateY(-2px);}
 
 <body>
 
-<div class="loading" id="loading">⏳ กำลังโหลด...</div>
 <div class="toast" id="toast"></div>
 
 <div class="wrap">
@@ -227,36 +215,32 @@ button:hover{transform:translateY(-2px);}
 
 </div>
 
-<!-- BILL -->
-<div class="modal" id="billModal">
- <div class="modal-content">
-  <h3>🧾 บิลรวม</h3>
-  <div id="billList"></div>
-  <hr>
-  <div id="billTotal"></div><br>
-  <button class="reset" onclick="closeBill()">ปิด</button>
- </div>
-</div>
-
 <audio id="clickSound">
 <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3">
 </audio>
 
 <script>
-let expenses=[];
+/* BLOCK ZOOM */
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('touchmove',e=>{
+ if(e.scale!==1) e.preventDefault();
+},{passive:false});
+let lastTouch=0;
+document.addEventListener('touchend',e=>{
+ let now=Date.now();
+ if(now-lastTouch<=300) e.preventDefault();
+ lastTouch=now;
+});
 
-const titleEl=title;
-const amountEl=amount;
-const payerEl=payer;
-const listEl=list;
-const summaryEl=finalSummary;
+/* APP */
+let expenses=[];
+const titleEl=title,amountEl=amount,payerEl=payer;
+const listEl=list,summaryEl=finalSummary;
 const toast=document.getElementById("toast");
-const loading=document.getElementById("loading");
 const clickSound=document.getElementById("clickSound");
 
-/* UTIL */
-function showToast(msg){
- toast.innerText=msg;
+function showToast(m){
+ toast.innerText=m;
  toast.classList.add("show");
  setTimeout(()=>toast.classList.remove("show"),2000);
 }
@@ -267,14 +251,13 @@ function playClick(){
 }
 
 function spawnHeart(){
- const h=document.createElement("div");
+ let h=document.createElement("div");
  h.className="heart";
  h.innerText="💖";
  document.body.appendChild(h);
  setTimeout(()=>h.remove(),1200);
 }
 
-/* LOCAL STORAGE */
 function saveLocal(){
  localStorage.setItem("coupleData",JSON.stringify(expenses));
 }
@@ -282,102 +265,72 @@ function loadLocal(){
  expenses=JSON.parse(localStorage.getItem("coupleData")||"[]");
 }
 
-/* RENDER */
 function render(){
  listEl.innerHTML="";
  let ton=0,pam=0;
-
  expenses.forEach((e,i)=>{
-  const half=e.amount/2;
+  let half=e.amount/2;
   e.payer==="ต้น"?pam+=half:ton+=half;
-
-  const div=document.createElement("div");
-  div.className="item";
-  div.innerHTML=`
+  let d=document.createElement("div");
+  d.className="item";
+  d.innerHTML=`
    <span>${e.payer} ซื้อ ${e.title} ${e.amount}฿</span>
    <div class="actions">
     <button class="edit" onclick="editItem(${i})">✏️</button>
     <button class="del" onclick="deleteItem(${i})">❌</button>
    </div>`;
-  listEl.appendChild(div);
+  listEl.appendChild(d);
  });
-
  if(ton>pam) summaryEl.innerText=`ต้นติดแป๋ม ${(ton-pam).toFixed(2)} บาท`;
  else if(pam>ton) summaryEl.innerText=`แป๋มติดต้น ${(pam-ton).toFixed(2)} บาท`;
  else summaryEl.innerText="🎉 เสมอกัน";
 }
 
-/* ADD */
 addBtn.onclick=()=>{
- playClick();
- spawnHeart();
-
+ playClick();spawnHeart();
  if(!titleEl.value||!amountEl.value){
-  showToast("กรอกข้อมูลให้ครบ");
-  return;
+  showToast("กรอกข้อมูลให้ครบ");return;
  }
-
  expenses.push({
   title:titleEl.value,
   amount:Number(amountEl.value),
   payer:payerEl.value
  });
-
- saveLocal();
- render();
+ saveLocal();render();
+ titleEl.value="";amountEl.value="";
  showToast("บันทึกแล้ว");
+};
 
- titleEl.value="";
- amountEl.value="";
-}
-
-/* EDIT */
 window.editItem=i=>{
- playClick();
  titleEl.value=expenses[i].title;
  amountEl.value=expenses[i].amount;
  payerEl.value=expenses[i].payer;
  expenses.splice(i,1);
- saveLocal();
- render();
-}
+ saveLocal();render();
+};
 
-/* DELETE */
 window.deleteItem=i=>{
- playClick();
  if(confirm("ลบรายการนี้?")){
   expenses.splice(i,1);
-  saveLocal();
-  render();
+  saveLocal();render();
  }
-}
+};
 
-/* BILL */
 function openBill(){
- playClick();
- let t=0;
- billList.innerHTML="";
+ let t=0,bill="";
  expenses.forEach(e=>{
-  billList.innerHTML+=`${e.title} - ${e.amount}฿ (${e.payer})<br>`;
+  bill+=`${e.title} - ${e.amount}฿ (${e.payer})<br>`;
   t+=e.amount;
  });
- billTotal.innerHTML=`รวม ${t} บาท`;
- billModal.style.display="flex";
-}
-function closeBill(){
- playClick();
- billModal.style.display="none";
+ alert(bill+"\nรวม "+t+" บาท");
 }
 
-/* RESET */
 resetAll.onclick=()=>{
- playClick();
  if(confirm("ล้างทั้งหมด?")){
   expenses=[];
-  saveLocal();
-  render();
+  saveLocal();render();
  }
-}
+};
 
 loadLocal();
 render();
