@@ -94,7 +94,7 @@ button{
 
 <script>
 
-const API_URL="[payerName](https://script.google.com/macros/s/AKfycbxcmKsJZMDVpc_QktPe_JjEwt8SVvJvIIVTXohjggenF3doLM7HQTCWB8MSb-1PhVHLOg/exec)";
+const API_URL="https://script.google.com/macros/s/AKfycbxcmKsJZMDVpc_QktPe_JjEwt8SVvJvIIVTXohjggenF3doLM7HQTCWB8MSb-1PhVHLOg/exec";
 
 let expenses=[];
 
