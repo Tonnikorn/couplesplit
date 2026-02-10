@@ -76,26 +76,45 @@ button{
 </div>
 
 <script>
-/* ===============================
-   🔴 ใส่ URL Google Script ตรงนี้
-================================= */
+// ============================
+// DOM
+// ============================
+const youName = document.getElementById("youName");
+const partnerName = document.getElementById("partnerName");
+const title = document.getElementById("title");
+const amount = document.getElementById("amount");
+const payer = document.getElementById("payer");
+const addBtn = document.getElementById("addBtn");
+const list = document.getElementById("list");
+const finalSummary = document.getElementById("finalSummary");
+const resetAll = document.getElementById("resetAll");
+
+// ============================
+// Google Script URL
+// ============================
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzNRFBiH4gN6Kog9jZ4672L2EzQONFwV_LhXZM9KbIg8KiMXns8OKP2NtuCucbrDwWIcw/exec";
 
-let expenses=[];
+let expenses = [];
 
-/* ===============================
-      โหลดข้อมูลจาก Google Sheet
-================================= */
+// ============================
+// โหลดจาก Google Sheet
+// ============================
 async function loadFromSheet(){
-  const res = await fetch(SHEET_URL);
-  expenses = await res.json();
-  saveLocal();
-  render();
+  try{
+    const res = await fetch(SHEET_URL);
+    expenses = await res.json();
+    saveLocal();
+    render();
+  }catch(err){
+    console.log("โหลด Sheet ไม่ได้",err);
+    loadLocal();
+    render();
+  }
 }
 
-/* ===============================
-      LocalStorage
-================================= */
+// ============================
+// LocalStorage
+// ============================
 function saveLocal(){
   localStorage.setItem("coupleData",JSON.stringify(expenses));
 }
@@ -103,14 +122,14 @@ function loadLocal(){
   expenses = JSON.parse(localStorage.getItem("coupleData")||"[]");
 }
 
-/* ===============================
-      แสดงผล
-================================= */
+// ============================
+// Render
+// ============================
 function render(){
   list.innerHTML="";
   let youOwe=0, partnerOwe=0;
 
-  expenses.forEach((e,i)=>{
+  expenses.forEach(e=>{
     const half = e.amount/2;
     if(e.payer==="you") partnerOwe+=half;
     else youOwe+=half;
@@ -130,9 +149,9 @@ function render(){
     finalSummary.innerText="🎉 เสมอกัน";
 }
 
-/* ===============================
-      เพิ่มรายการ
-================================= */
+// ============================
+// Add
+// ============================
 addBtn.onclick = async ()=>{
   if(!title.value || !amount.value){
     alert("กรอกข้อมูลให้ครบ");
@@ -148,33 +167,37 @@ addBtn.onclick = async ()=>{
       : partnerName.value
   };
 
-  // ส่งไป Google Sheet
-  await fetch(SHEET_URL,{
-    method:"POST",
-    body:JSON.stringify(data)
-  });
+  try{
+    await fetch(SHEET_URL,{
+      method:"POST",
+      body:JSON.stringify(data)
+    });
+  }catch(err){
+    alert("ส่งข้อมูลเข้า Sheet ไม่ได้ แต่บันทึกในเครื่องไว้แล้ว");
+  }
+
+  expenses.push(data);
+  saveLocal();
+  render();
 
   title.value="";
   amount.value="";
-  loadFromSheet();
 }
 
-/* ===============================
-      รีเซ็ต
-================================= */
+// ============================
+// Reset
+// ============================
 resetAll.onclick=()=>{
-  if(confirm("ล้างเฉพาะในเครื่อง?")){
+  if(confirm("ล้างข้อมูลในเครื่อง?")){
     expenses=[];
     saveLocal();
     render();
   }
 }
 
-/* ===============================
-      เริ่มต้น
-================================= */
-loadLocal();
-render();
+// ============================
+// Start
+// ============================
 loadFromSheet();
 </script>
 
