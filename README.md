@@ -2,252 +2,199 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CoupleSplit — ต้น & แป๋ม</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoupleSplit</title>
+
 <style>
-:root{
-  --bg:#fff0f5; --card:#ffffffcc; --accent:#ff6f91; --accent2:#ffb6b9;
-  --success:#22c55e; --danger:#ef4444; --text:#334155; --radius:24px;
-  --font-family:'Comic Sans MS', cursive, sans-serif;
-}
-*{box-sizing:border-box;}
-html, body{
-  margin:0; padding:0; width:100%; min-height:100%;
-  font-family:var(--font-family);
-  background:var(--bg);
-  background-image: linear-gradient(120deg, #ffe0f0 0%, #fff0f5 100%);
-  overflow:auto; /* เลื่อนทั้งหน้าได้ */
+body{
+ font-family:Comic Sans MS;
+ background:#fff0f5;
+ display:flex;
+ justify-content:center;
 }
 .wrap{
-  width:100%; max-width:600px; margin:20px auto;
-  background:var(--card); border-radius:var(--radius); 
-  backdrop-filter: blur(10px);
-  box-shadow:0 10px 25px rgba(255,111,145,0.15);
-  overflow:hidden; display:flex; flex-direction:column;
-  animation:fadeIn 0.5s ease-in-out;
+ background:#ffffffcc;
+ width:100%;
+ max-width:500px;
+ padding:20px;
+ border-radius:20px;
+ box-shadow:0 0 15px rgba(0,0,0,.2);
 }
 header{
-  padding:20px; 
-  text-align:center; 
-  background:linear-gradient(90deg, #ff6f91, #ffb6b9); 
-  color:white;
-  border-bottom-left-radius:24px; 
-  border-bottom-right-radius:24px;
-  box-shadow: 0 6px 15px rgba(255,111,145,0.2);
-  /* header เลื่อนตามบอดี้ */
+ text-align:center;
+ background:#ff6f91;
+ color:white;
+ padding:15px;
+ border-radius:15px;
 }
-header h1{margin:0; font-size:28px; letter-spacing:1px; text-shadow:1px 1px 4px rgba(0,0,0,0.2);}
-header p{margin:5px 0 0 0; font-size:14px;}
-.names{margin-top:10px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;}
 .names input{
-  padding:6px 12px; border-radius:16px; border:none; text-align:center; font-weight:600; font-size:14px;
-  box-shadow:0 6px 15px rgba(255,111,145,0.2); min-width:80px; transition:0.2s;
-}
-.names input:focus{outline:none; transform:scale(1.03);}
-.swap-btn{
-  margin-top:10px; padding:6px 12px; border:none; border-radius:16px;
-  background:#ffe0e6; color:var(--accent); cursor:pointer; font-weight:600; transition:0.2s;
-  box-shadow:0 6px 15px rgba(255,111,145,0.2);
-}
-.swap-btn:hover{background:var(--accent2); color:white; transform:scale(1.05);}
-.swap-btn:active{transform:scale(0.95); box-shadow:0 4px 10px rgba(255,111,145,0.2);}
-main{
-  padding:15px; flex:1; display:flex; flex-direction:column;
-}
-.summary{text-align:center; margin-bottom:15px;}
-.summary div{margin:8px 0; font-size:18px; font-weight:600; padding:10px; border-radius:16px; background:#ffffff77; backdrop-filter: blur(5px);}
-.summary .big{font-size:22px; font-weight:700;}
-.list{
-  margin-top:10px; flex:1; overflow-y:auto;
-  max-height:300px; /* scroll เฉพาะรายการเยอะ */
+ width:45%;
+ padding:6px;
+ margin:5px;
+ border-radius:10px;
+ border:none;
 }
 .item{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:10px; border-radius:16px; margin-bottom:8px; background:#fff3f6cc; 
-  transition:0.2s; backdrop-filter: blur(5px); border:1px dashed #ffb6b9;
-  box-shadow:0 4px 12px rgba(255,182,185,0.2);
+ background:#ffe4ec;
+ padding:8px;
+ border-radius:10px;
+ margin:5px 0;
+ display:flex;
+ justify-content:space-between;
 }
-.item:hover{transform:scale(1.03); box-shadow:0 6px 18px rgba(255,182,185,0.3);}
-.item button{
-  padding:4px 10px; border:none; border-radius:16px; background:var(--accent2); color:white;
-  font-weight:600; transition:0.2s; cursor:pointer;
-  box-shadow:0 4px 12px rgba(255,182,185,0.2);
+button{
+ background:#ff6f91;
+ color:white;
+ border:none;
+ padding:8px;
+ border-radius:10px;
+ margin-top:5px;
+ width:100%;
 }
-.item button:hover{background:var(--accent); transform:scale(1.1);}
-.item button:active{transform:scale(0.95); box-shadow:0 2px 8px rgba(255,182,185,0.2);}
-.add-card{display:flex; flex-direction:column; gap:10px; margin-bottom:20px;}
-.add-card input, .add-card select{
-  padding:8px 12px; border-radius:16px; border:1px solid #ffb6b9; font-size:14px;
-  background:#ffffffaa; backdrop-filter: blur(5px); transition:0.2s; box-shadow:0 6px 15px rgba(255,111,145,0.2);
+.add-card input,select{
+ width:100%;
+ padding:8px;
+ border-radius:10px;
+ border:1px solid pink;
+ margin:5px 0;
 }
-.add-card input::placeholder{color:#888;}
-.add-card input:focus, .add-card select:focus{outline:none; transform:scale(1.03);}
-.add-card button{
-  padding:10px 15px; border:none; border-radius:16px; background:var(--accent); color:white; font-weight:700;
-  transition:0.2s; cursor:pointer; box-shadow:0 6px 15px rgba(255,111,145,0.2);
-}
-.add-card button:hover{background:var(--accent2); transform:scale(1.05);}
-.add-card button:active{transform:scale(0.95); box-shadow:0 4px 12px rgba(255,111,145,0.2);}
-footer{text-align:center; padding:10px; font-size:12px; color:#555;}
-
-/* popup บิล */
-#billPopup{
-  display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4);
-  justify-content:center; align-items:center; z-index:1000;
-  animation:fadeIn 0.3s;
-}
-#billContent{
-  background:#fff; border-radius:24px; width:90%; max-width:500px; max-height:80%; overflow:auto; padding:20px; position:relative;
-  box-shadow:0 10px 30px rgba(255,111,145,0.2); transform:scale(0.95); animation:popIn 0.3s forwards;
-}
-#billContent h2{color:#ff6f91; text-align:center; font-size:24px; margin-bottom:10px; animation:fadeColor 3s infinite alternate;}
-#billContent p{font-size:18px; margin:10px 0;}
-#billContent ul{list-style:none; padding:0;}
-#billContent ul li{
-  padding:5px 0; font-size:16px; color:#334155; background:#fff0f5aa; border-radius:16px; margin:3px 0;
-  padding-left:10px; transition:0.2s;
-  box-shadow:0 4px 12px rgba(255,182,185,0.2);
-}
-#billContent ul li:hover{background:#ffe0e6aa; transform:scale(1.02);}
-#billContent button.closePopup{
-  position:absolute; top:10px; right:10px; background:#ff6f91; border:none; color:white; border-radius:50%; padding:8px 12px; cursor:pointer;
-  font-size:18px; box-shadow:0 4px 10px rgba(255,111,145,0.2); transition:0.2s;
-}
-#billContent button.closePopup:hover{background:#ffb6b9; transform:scale(1.1);}
-#billContent button.closePopup:active{transform:scale(0.95);}
-
-/* Animations */
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-@keyframes popIn{from{transform:scale(0.8);}to{transform:scale(1);}}
-@keyframes fadeColor{0%{color:#ff6f91;}50%{color:#ff90a0;}100%{color:#ff6f91;}}
-.list::-webkit-scrollbar, #billContent::-webkit-scrollbar{width:6px;}
-.list::-webkit-scrollbar-thumb, #billContent::-webkit-scrollbar-thumb{background:#ffb6b9; border-radius:3px;}
 </style>
 </head>
+
 <body>
 
-<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
-
 <div class="wrap">
-  <header>
-    <h1>CoupleSplit</h1>
-    <p>แบ่งจ่ายสำหรับคู่รัก น่ารัก สดใส</p>
-    <div class="names">
-      <input id="youName" value="ต้น" />
-      <input id="partnerName" value="แป๋ม" />
-    </div>
-    <button class="swap-btn" id="swapNamesBtn">🔄 สลับชื่อ</button>
-  </header>
-  <main>
-    <div class="summary">
-      <div id="finalSummary" class="big">ยังไม่มีข้อมูล</div>
-    </div>
-    <div class="add-card">
-      <input id="title" placeholder="ชื่อรายการ เช่น ข้าวเที่ยง">
-      <input id="amount" placeholder="จำนวนเต็มก่อนหารครึ่ง (฿)" type="number" step="0.01">
-      <select id="payer">
-        <option value="you">คุณ</option>
-        <option value="partner">แฟน</option>
-      </select>
-      <button id="addBtn">+ เพิ่มรายการ</button>
-    </div>
-    <div class="list" id="list"></div>
-    <div style="text-align:center; margin-top:20px;">
-      <button id="viewBillBtn">📄 ดูบิลสรุป</button>
-      <button id="resetAll">♻️ รีเซ็ตทั้งหมด</button>
-    </div>
-  </main>
-  <footer>CoupleSplit — ใช้งานง่าย น่ารัก สดใส</footer>
+
+<header>
+<h2>CoupleSplit</h2>
+<div class="names">
+<input id="youName" value="ต้น">
+<input id="partnerName" value="แป๋ม">
+</div>
+<button id="swap">สลับชื่อ</button>
+</header>
+
+<h3 id="summary">ยังไม่มีข้อมูล</h3>
+
+<div class="add-card">
+<input id="title" placeholder="ชื่อรายการ">
+<input id="amount" type="number" placeholder="จำนวนเงิน">
+<select id="payer">
+ <option value="you">คุณ</option>
+ <option value="partner">แฟน</option>
+</select>
+<button id="addBtn">เพิ่มรายการ</button>
 </div>
 
-<div id="billPopup">
-  <div id="billContent">
-    <button class="closePopup">❌</button>
-    <div id="billHTML"></div>
-  </div>
+<div id="list"></div>
+
+<button id="reset">รีเซ็ตทั้งหมด</button>
+
 </div>
 
 <script>
-(function(){
-  const $ = id=>document.getElementById(id);
-  const youInput=$('youName'), partnerInput=$('partnerName');
-  const finalSummary=$('finalSummary');
-  const listEl=$('list'), addBtn=$('addBtn'), resetAll=$('resetAll'), viewBillBtn=$('viewBillBtn');
-  const title=$('title'), amount=$('amount'), payer=$('payer');
-  const swapBtn=$('swapNamesBtn');
-  const billPopup=$('billPopup'), billHTML=$('billHTML'), closePopup=document.querySelector('.closePopup');
-  const clickSound=$('clickSound');
-  const STORAGE_KEY='couplesplit:expenses';
-  let expenses=[];
 
-  function playSound(){ clickSound.currentTime=0; clickSound.play(); }
+const API_URL="ใส่ลิงก์ WebApp ที่นี่";
 
-  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses)); }
-  function load(){ expenses=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); render(); }
-  function fmt(n){ return Number(n).toFixed(2)+' ฿'; }
+let expenses=[];
 
-  function computeBalances(list){
-    let you=0, partner=0;
-    list.forEach(e=>{
-      const half=Number(e.amount)/2;
-      if(e.payerName === youInput.value) partner+=half;
-      else you+=half;
-    });
-    return {youOwes:you, partnerOwes:partner};
-  }
+const youName=document.getElementById("youName");
+const partnerName=document.getElementById("partnerName");
+const title=document.getElementById("title");
+const amount=document.getElementById("amount");
+const payer=document.getElementById("payer");
+const list=document.getElementById("list");
+const summary=document.getElementById("summary");
 
-  function render(){
-    listEl.innerHTML='';
-    if(expenses.length===0){ listEl.innerHTML='<div style="text-align:center; color:#888;">ยังไม่มีรายการ</div>'; }
-    expenses.forEach((ex,i)=>{
-      const item=document.createElement('div'); item.className='item';
-      item.innerHTML=`<span>${ex.payerName} ซื้อ ${ex.title} ${Number(ex.amount).toFixed(2)} บาท</span>`;
-      const delBtn=document.createElement('button'); delBtn.textContent='❌ ลบ';
-      delBtn.onclick=()=>{playSound(); expenses.splice(i,1); save(); render();}
-      item.appendChild(delBtn); listEl.appendChild(item);
-    });
+function load(){
+ fetch(API_URL)
+ .then(r=>r.json())
+ .then(data=>{
+   expenses=data.map(r=>({
+     title:r[0],
+     amount:Number(r[1]),
+     payer:r[2]
+   }));
+   render();
+ });
+}
 
-    const balances=computeBalances(expenses);
-    const youName=youInput.value, partnerName=partnerInput.value;
-    if(balances.partnerOwes > balances.youOwes){
-      finalSummary.innerHTML=`<span style="color:var(--success);">${partnerName}</span> ติด <span style="color:var(--danger);">${youName}</span> ${fmt(balances.partnerOwes - balances.youOwes)}`;
-    } else if(balances.youOwes > balances.partnerOwes){
-      finalSummary.innerHTML=`<span style="color:var(--danger);">${youName}</span> ติด <span style="color:var(--success);">${partnerName}</span> ${fmt(balances.youOwes - balances.partnerOwes)}`;
-    } else{
-      finalSummary.innerHTML=`🎉 เสมอกัน ไม่มีใครติดใคร`;
-    }
-  }
+function save(){
+ fetch(API_URL,{
+  method:"POST",
+  body:JSON.stringify(expenses)
+ });
+}
 
-  addBtn.onclick=()=>{
-    playSound();
-    const t=title.value.trim(), a=parseFloat(amount.value);
-    if(!t||!a||a<=0){alert('กรุณากรอกชื่อและจำนวนให้ถูกต้อง'); return;}
-    const name = payer.value==='you' ? youInput.value : partnerInput.value;
-    expenses.push({title:t, amount:a, payer:payer.value, payerName:name});
-    title.value=''; amount.value='';
-    save(); render();
+function getName(p){
+ return p==="you"?youName.value:partnerName.value;
+}
+
+function render(){
+ list.innerHTML="";
+ let you=0,partner=0;
+
+ expenses.forEach((e,i)=>{
+  const half=e.amount/2;
+  if(e.payer==="you") partner+=half;
+  else you+=half;
+
+  const div=document.createElement("div");
+  div.className="item";
+  div.innerHTML=`${getName(e.payer)} ซื้อ ${e.title} ${e.amount} บาท`;
+  const b=document.createElement("button");
+  b.textContent="❌";
+  b.onclick=()=>{
+   expenses.splice(i,1);
+   save();
+   render();
   };
+  div.appendChild(b);
+  list.appendChild(div);
+ });
 
-  resetAll.onclick=()=>{ playSound(); if(confirm('ลบข้อมูลทั้งหมด?')){ expenses=[]; save(); render(); } };
-  swapBtn.onclick=()=>{ playSound(); const tmp=youInput.value; youInput.value=partnerInput.value; partnerInput.value=tmp; render(); };
-  viewBillBtn.onclick=()=>{
-    playSound();
-    const youName=youInput.value, partnerName=partnerInput.value;
-    const balances=computeBalances(expenses);
-    let html=`<h2>📄 บิลสรุป CoupleSplit</h2>`;
-    if(balances.partnerOwes > balances.youOwes){
-      html+=`<p style="color:green; font-weight:600;">${partnerName} ติด ${youName}: ${fmt(balances.partnerOwes - balances.youOwes)}</p>`;
-    } else if(balances.youOwes > balances.partnerOwes){
-      html+=`<p style="color:red; font-weight:600;">${youName} ติด ${partnerName}: ${fmt(balances.youOwes - balances.partnerOwes)}</p>`;
-    } else{ html+=`<p style="font-weight:600;">🎉 เสมอกัน ไม่มีใครติดใคร</p>`; }
-    html+='<h3 style="margin-top:15px; text-align:center;">รายการทั้งหมด</h3><ul>';
-    expenses.forEach(ex=>{ html+=`<li>${ex.payerName} ซื้อ ${ex.title} ${Number(ex.amount).toFixed(2)} บาท</li>`; });
-    html+='</ul>';
-    billHTML.innerHTML=html; billPopup.style.display='flex';
-  };
-  closePopup.onclick=()=>{ playSound(); billPopup.style.display='none'; }
-  load();
-})();
+ if(you>partner)
+  summary.innerHTML=`${youName.value} ติด ${partnerName.value} ${(you-partner).toFixed(2)} บาท`;
+ else if(partner>you)
+  summary.innerHTML=`${partnerName.value} ติด ${youName.value} ${(partner-you).toFixed(2)} บาท`;
+ else
+  summary.innerHTML="🎉 เสมอกัน";
+}
+
+document.getElementById("addBtn").onclick=()=>{
+ if(!title.value||!amount.value)
+  return alert("กรอกข้อมูลให้ครบ");
+
+ expenses.push({
+  title:title.value,
+  amount:Number(amount.value),
+  payer:payer.value
+ });
+
+ title.value="";
+ amount.value="";
+
+ save();
+ render();
+};
+
+document.getElementById("swap").onclick=()=>{
+ [youName.value,partnerName.value]=
+ [partnerName.value,youName.value];
+ render();
+};
+
+document.getElementById("reset").onclick=()=>{
+ if(confirm("ลบทั้งหมด?")){
+  expenses=[];
+  save();
+  render();
+ }
+};
+
+load();
+
 </script>
+
 </body>
 </html>
